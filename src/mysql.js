@@ -17,6 +17,15 @@ module.exports = function () {
   app.setup = function (...args) {
     const result = oldSetup.apply(this, args);
 
+    const snowflake = app.get('snowflakeWorker');
+
+    sequelize.addHook('beforeCreate', function (instance, options) {
+      return (async() => {
+        if (instance.id) return null;
+        instance.id = await snowflake.getId();
+      })();
+    });
+
     // Set up data relationships
     const models = sequelize.models;
     Object.keys(models).forEach(name => {
@@ -26,7 +35,7 @@ module.exports = function () {
     });
 
     // Sync to the database
-    sequelize.sync({force: true});
+    sequelize.sync({});
 
     return result;
   };

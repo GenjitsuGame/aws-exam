@@ -10,7 +10,7 @@ const configuration = require('feathers-configuration');
 const hooks = require('feathers-hooks');
 const rest = require('feathers-rest');
 
-
+const snowflake = require('./snowflake');
 const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
@@ -36,7 +36,7 @@ app.configure(hooks());
 app.configure(mysql);
 app.configure(rest());
 
-
+app.configure(snowflake);
 // Set up our services (see `services/index.js`)
 app.configure(services);
 // Configure middleware (see `middleware/index.js`) - always has to be last
