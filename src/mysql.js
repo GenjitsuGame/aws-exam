@@ -19,11 +19,13 @@ module.exports = function () {
 
     const snowflake = app.get('snowflakeWorker');
 
-    sequelize.addHook('beforeCreate', function (instance, options) {
-      return (async() => {
-        if (instance.id) return null;
-        instance.id = await snowflake.getId();
-      })();
+    sequelize.addHook('beforeCreate', function (instance, options, cb) {
+      if (instance.id) return null;
+      snowflake.getId((err, id) => {
+        if (err) return cb(err);
+        instance.id = id;
+        cb();
+      });
     });
 
     // Set up data relationships
